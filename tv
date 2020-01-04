@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# play a channel
+
+AZAP=azap
+MPLAYER=mplayer
+
+CARD=0
+DEVICE=/dev/dvb/adapter${CARD}/dvr${CARD}
+ 
+if [ "$#" -ne 1 ]; then
+    echo "USAGE: play <channel>"
+    exit 1
+fi
+
+CHANNEL="$1"
+
+${AZAP} -r "${channel}" &
+AZAP_PID=$!
+
+sleep 1
+
+${MPLAYER} ${DEVICE}
+
+kill $AZAP_PID
