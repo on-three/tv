@@ -15,7 +15,7 @@ fi
 
 CHANNEL="$1"
 
-${AZAP} -r "${channel}" &
+${AZAP} -r -s "${channel}" &
 AZAP_PID=$!
 
 sleep 1
