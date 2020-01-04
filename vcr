@@ -19,11 +19,12 @@ DATE=`date +%-d%b%Y\-%-I%M%p`
 
 OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
 
-${AZAP} -r -t ${SECONDS} "${channel}" &
+${AZAP} -r -t ${SECONDS} -s "${channel}" &
 AZAP_PID=$!
 
-sleep 5
+sleep 3
 
-cp ${DEVICE} "${OUTFILE}"
+timeout ${SECONDS}s cat ${DEVICE} > "${OUTFILE}"
 
-kill $AZAP_PID
+# not necessary to kill the process as it should have exited approx n seconds ago
+#kill $AZAP_PID
