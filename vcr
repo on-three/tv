@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# record a channel for N seconds
+
+AZAP=azap
+MPLAYER=mplayer
+
+CARD=0
+DEVICE=/dev/dvb/adapter${CARD}/dvr${CARD}
+ 
+if [ "$#" -ne 2 ]; then
+    echo "USAGE: vcr <channel> <seconds to record>"
+    exit 1
+fi
+
+CHANNEL="$1"
+SECONDS=$2
+DATE=`date +%-d%b%Y\-%-I%M%p`
+
+OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
+
+${AZAP} -r -t ${SECONDS} "${channel}" &
+AZAP_PID=$!
+
+sleep 5
+
+cp ${DEVICE} "${OUTFILE}"
+
+kill $AZAP_PID
