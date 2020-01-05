@@ -15,10 +15,12 @@ fi
 
 CHANNEL="$1"
 
-${AZAP} -r -s "${channel}" &
+echo setting tuner to channel "${CHANNEL}"
+
+${AZAP} -r -s "${CHANNEL}" &
 AZAP_PID=$!
 
-sleep 1
+sleep 2
 
 ${MPLAYER} ${DEVICE}
 

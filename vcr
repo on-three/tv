@@ -19,7 +19,7 @@ DATE=`date +%-d%b%Y\-%-I%M%p`
 
 OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
 
-${AZAP} -r -t ${SECONDS} -s "${channel}" &
+${AZAP} -r -t ${SECONDS} -s "${CHANNEL}" &
 AZAP_PID=$!
 
 sleep 3
