@@ -15,11 +15,21 @@ fi
 
 CHANNEL="$1"
 SECONDS=$2
-DATE=`date +%-d%b%Y\-%-I%M%p`
+DATE=`date +%-d%b%Y\-%-I%M.%S%p`
 
 OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
 
-${AZAP} -r -t ${SECONDS} -s "${CHANNEL}" &
+# get an unoccupied tuner. Return code 0..N is the tuner we use
+get.tuner
+ADAPTER=$?
+MUX=0
+DEVICE=/dev/dvb/adapter${ADAPTER}/dvr${MUX}
+
+sleep 1
+
+echo "Using free tuner ${ADAPTER} to record channel ${CHANNEL}"
+
+${AZAP} -a "${ADAPTER}" -r -t "${SECONDS}" -s "${CHANNEL}" &
 AZAP_PID=$!
 
 sleep 3
