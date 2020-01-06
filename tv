@@ -5,9 +5,6 @@
 AZAP=azap
 MPLAYER=mplayer
 
-CARD=0
-DEVICE=/dev/dvb/adapter${CARD}/dvr${CARD}
- 
 if [ "$#" -ne 1 ]; then
     echo "USAGE: play <channel>"
     exit 1
@@ -15,13 +12,20 @@ fi
 
 CHANNEL="$1"
 
-echo setting tuner to channel "${CHANNEL}"
+# get an unoccupied tuner. Return code 0..N is the tuner we use
+get.tuner
+ADAPTER=$?
+MUX=0
+DEVICE=/dev/dvb/adapter${ADAPTER}/dvr${MUX}
 
-${AZAP} -r -s "${CHANNEL}" &
+echo setting tuner ${ADAPTER} to channel "${CHANNEL}"
+
+${AZAP} -a ${ADAPTER} -r -s "${CHANNEL}" &
 AZAP_PID=$!
 
-sleep 2
+sleep 1
 
+#${MPLAYER} -subcc 0 ${DEVICE}
 ${MPLAYER} ${DEVICE}
 
 kill $AZAP_PID

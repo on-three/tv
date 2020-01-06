@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Get a free tuner from among N devices
+MAX_TUNER=3
+
+AZAP=azap
+CHANNEL=metv
+
+for TUNER in $(seq 0 ${MAX_TUNER}); do
+    # TODO: check the tuner status in some way
+    # bash is not well suited to functions so do it here
+    DEV=/dev/dvb/adapter${TUNER}
+    ${AZAP} -a ${TUNER} -s -t 1 ${CHANNEL}
+    BUSY=$?
+    if (( $BUSY == 0 )); then
+        break
+    fi
+done
+
+sleep 1
+
+exit $TUNER
