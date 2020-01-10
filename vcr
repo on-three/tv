@@ -5,6 +5,10 @@
 AZAP=azap
 MPLAYER=mplayer
 
+# the directory this script resides in is used to access other tools
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+GET_TUNER=${CURRENT_DIR}/get.tuner
+
 CARD=0
 DEVICE=/dev/dvb/adapter${CARD}/dvr${CARD}
  
@@ -20,7 +24,7 @@ DATE=`date +%-d%b%Y\-%-I%M.%S%p`
 OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
 
 # get an unoccupied tuner. Return code 0..N is the tuner we use
-get.tuner
+${GET_TUNER}
 ADAPTER=$?
 MUX=0
 DEVICE=/dev/dvb/adapter${ADAPTER}/dvr${MUX}
