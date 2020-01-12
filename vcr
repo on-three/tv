@@ -12,16 +12,21 @@ GET_TUNER=${CURRENT_DIR}/get.tuner
 CARD=0
 DEVICE=/dev/dvb/adapter${CARD}/dvr${CARD}
  
-if [ "$#" -ne 2 ]; then
-    echo "USAGE: vcr <channel> <seconds to record>"
+if [ "$#" -lt 2 ]; then
+    echo "USAGE: vcr <channel> <seconds to record> [program name]"
     exit 1
 fi
 
 CHANNEL="$1"
 SECONDS=$2
+# Optional show name argument
+NAME=
+if [ "$#" -gt 2 ]; then
+    NAME=${3}.
+fi
 DATE=`date +%-d%b%Y\-%-I%M.%S%p`
 
-OUTFILE=${HOME}/Videos/${CHANNEL}.${DATE}.ts
+OUTFILE=${HOME}/Videos/${NAME}${CHANNEL}.${DATE}.ts
 
 # get an unoccupied tuner. Return code 0..N is the tuner we use
 ${GET_TUNER}
