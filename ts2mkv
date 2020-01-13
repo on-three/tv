@@ -2,4 +2,20 @@
 
 #ts2mkv
 
-ffmpeg -i metv.12Jan2020-400.01AM.ts -f lavfi -i "movie=metv.12Jan2020-400.01AM.ts[out0+subcc]" -map 0 -map 1:s -c:a copy -c:s srt test.mkv
+FFMPEG=ffmpeg
+
+if [ "$#" -lt 1 ]; then
+    echo "USAGE: ts2mkv <input .ts file> [optional program name]"
+    exit 1
+fi
+
+TS_FILE="$1"
+# Optional show name argument
+NAME=
+if [ "$#" -gt 1 ]; then
+    NAME=${2}.
+fi
+
+OUTPUT_MKV=${NAME}.${TS_FILE%.ts}.mkv
+
+${FFMPEG} -i ${TS_FILE} -f lavfi -i "movie=${TS_FILE}[out0+subcc]" -map 0 -map 1:s -c:a copy -c:s srt ${OUTPUT_MKV}
