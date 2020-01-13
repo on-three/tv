@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#ts2mkv
+
+ffmpeg -i metv.12Jan2020-400.01AM.ts -f lavfi -i "movie=metv.12Jan2020-400.01AM.ts[out0+subcc]" -map 0 -map 1:s -c:a copy -c:s srt test.mkv
