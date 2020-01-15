@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+# for a given filename prefix, see if there's a storage bin
+# that matchs some .ts files
+# If we get a match, ensure a storage bin (folder) exists
+# Then pack the .ts in an mkv (reencoding) in the bin
+
+if [ $# -ne 1 ]; then
+    echo "USAGE encode.and.store <releate .ts file prefix i.e. show title>"
+    exit -1
+fi
+
+PREFIX=$1
+
+for FILE in ${PREFIX}*.ts ; do
+
+    if [ ! -d ${PREFIX} ]; then
+        mkdir -p ${PREFIX}
+    fi
+
+    OUTPUT_MKV=${PREFIX}/${FILE%.ts}.mkv
+    if [ ! -f ${OUTPUT_MKV} ]; then
+        ts2mkv ${FILE} ${OUTPUT_MKV}
+        # mark the original encoded .ts as stored
+        mv ${FILE} stored.${FILE}
+    else
+        echo "File ${OUTPUT_MKV} already exists. Skipping"
+    fi
+done
