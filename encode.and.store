@@ -6,25 +6,39 @@ set -e
 # If we get a match, ensure a storage bin (folder) exists
 # Then pack the .ts in an mkv (reencoding) in the bin
 
-if [ $# -ne 1 ]; then
-    echo "USAGE encode.and.store <releate .ts file prefix i.e. show title>"
-    exit -1
-fi
+VIDEO_STORAGE_DIR=${VIDEO_STORAGE_DIR:-/mnt/sdb1/tv}
 
-PREFIX=$1
+# if [ $# -ne 1 ]; then
+#     echo "USAGE encode.and.store"
+#     exit -1
+# fi
 
-for FILE in ${PREFIX}*.ts ; do
+for FOLDER in ${VIDEO_STORAGE_DIR}/*; do
+    [ -d "${FOLDER}" ] || continue # if not a directory, skip
+    PREFIX="$(basename ${FOLDER})"
+    #PREFIX=${FOLDER}
+    echo "Folder: ${FOLDER}"
+    echo "Prefix: ${PREFIX}"
+    for FILE in ${PWD}/${PREFIX}*.ts ; do
+        # idiotic posix behavior when no positives in for loop, forces us
+        # to do the following check for empty state too...
+        [ -f "$FILE" ] || continue
 
-    if [ ! -d ${PREFIX} ]; then
-        mkdir -p ${PREFIX}
-    fi
+        echo "Current file ${FILE}"
+        FILE_NAME="$(basename ${FILE})"
+        echo "Current filename: ${FILE_NAME}"
+        OUTPUT_MKV=${FOLDER}/${FILE_NAME%.ts}.mkv
+        echo "output MKV: ${OUTPUT_MKV}"
+        if [ ! -f ${OUTPUT_MKV} ]; then
+            echo "Generating file ${OUTPUT_MKV} via ffmpeg call from input ${FILE}"
+            ts2mkv ${FILE} ${OUTPUT_MKV}
+            # mark the original encoded .ts as stored
+            mv ${FILE_NAME} stored.${FILE_NAME}
 
-    OUTPUT_MKV=${PREFIX}/${FILE%.ts}.mkv
-    if [ ! -f ${OUTPUT_MKV} ]; then
-        ts2mkv ${FILE} ${OUTPUT_MKV}
-        # mark the original encoded .ts as stored
-        mv ${FILE} stored.${FILE}
-    else
-        echo "File ${OUTPUT_MKV} already exists. Skipping"
-    fi
+            # debug run
+            #exit 0
+        else
+            echo "File ${OUTPUT_MKV} already generated off input ${FILE}. Skipping"
+        fi
+    done
 done
